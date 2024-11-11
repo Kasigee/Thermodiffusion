@@ -1,4 +1,4 @@
-The relevant files for rerunning any of these FEP calculations are located in the folder "FEP". Within that folder the following commands are relevant:
+**The relevant files for rerunning any of these FEP calculations are located in the folder "FEP". Within that folder the following commands are relevant:**
 
 Permissions for scripts need to be changed to enable them to be executable:
 chmod +x run_GROMACS_FEP.sh
@@ -20,4 +20,4 @@ The key MD scripts:
 
 
 
-The Entropy model developed for this paper and displayed in Figure 5 is located in the jupyter notebook "Entropy_model.ipynb." This notebook includes all the parameters, etc., and it is all within one script.
+**The Entropy model developed for this paper and displayed in Figure 5 is located in the jupyter notebook "Entropy_model.ipynb." This notebook includes all the parameters, etc., and it is all within one script.**
