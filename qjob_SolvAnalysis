@@ -1,0 +1,110 @@
+#!/bin/bash
+
+if [ $# -ne 4 ]
+then
+echo "$0 ion type shellCutOff forback"
+exit 0
+fi
+
+
+FREE_ENERGY=`pwd`
+ion=$1
+type=$2
+shellCutOff=$3
+direction=$4
+if [ $type == 'anion' ]
+then
+at1=H
+at2=O
+else
+at1=O
+at2=H
+fi
+
+#echo "$0 $ion $type $shellCutOff $direction"
+
+ion2=$ion
+if [ $ion == 'KA' ]
+then
+ion2='K'
+elif [ $ion == 'FL' ]
+then
+ion2='F'
+elif [ $ion == 'IO' ] || [ $ion == 'IA' ] || [ $ion == 'IB' ] || [ $ion == 'IC' ] ||  [ $ion == 'ID' ] || [ $ion == 'IE' ]
+then
+ion2='I'
+elif [ $ion =='NACL' ]
+then
+ion2='NA'
+#ion2='CL'
+fi
+
+if [ $direction == 'forward' ]
+then
+lambda_num=0
+forback=''
+elif [ $direction == 'backward' ]
+then
+lambda_num=20
+forback=_$direction
+fi
+
+#cat <<END > SolvAn"$ion".job
+##!/bin/bash
+##PBS -P g15
+##PBS -l ncpus=12
+##PBS -q normal
+##PBS -l mem=4GB
+##PBS -l walltime=1:00:00
+##PBS -l wd
+##PBS -o SolvAn."$LAMBDA"."$forback".olog
+##PBS -N SolvAn."$LAMBDA"."$forback"job
+##PBS -l storage=scratch/g15
+#
+#export OMP_NUM_THREADS=12
+
+cd $FREE_ENERGY
+#totalframes=$(tail -n1000 Lambda_0/Production_MD/md0.log | grep -w 'time:'  | awk -F'.' '{print $1}')
+#totalframes=$(tail -n1000 Lambda_"$lambda_num"/Production_MD"$forback"/md"$lambda_num".log | grep -w 'time:' | awk '{print $2}' | awk -F'.' '{print $1}')
+totalframes=$( echo "$(tail -n1000  Lambda_"$lambda_num"/Production_MD"$forback"/md"$lambda_num".log | grep -w 'Writing checkpoint, step' | tail -n1 | awk '{print $4}') / 500" | bc )
+echo $totalframes
+if [ -f SolvAn_"$shellCutOff""$forback"_"$totalframes".dat ]
+then
+        #echo SolvAn_"$shellCutOff""$forback".dat exists
+        #cat SolvAn_"$shellCutOff""$forback".dat
+        #grep CN SolvAn_"$shellCutOff""$forback".dat
+        CN=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $6} END {printf "%.5f\n", sum/NR}')
+        #CN_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $6; sumsq += ($6)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)}') #STDEV
+	CN_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $6; sumsq += ($6)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)/5}') #STERR from 5 "replicates"
+        MRT=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $11} END {printf "%.5f\n", sum/NR}')
+#        MRT_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $11; sumsq += ($11)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)}') #STDEV
+        MRT_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $11; sumsq += ($11)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)/5}')  #STERR from 5 "replicates"
+        MRT_fit=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $13} END {printf "%.5f\n", sum/NR}')
+#        MRT_fit_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $13; sumsq += ($13)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)}') #STDEV
+        MRT_fit_err=$(grep CN SolvAn_"$shellCutOff""$forback"_"$totalframes".dat | awk '{sum += $13; sumsq += ($13)^2} END {printf "%.5f\n", sqrt(sumsq/NR - (sum/NR)^2)/5}')  #STERR from 5 "replicates"
+        echo $CN $CN_err $MRT $MRT_err $MRT_fit $MRT_fit_err
+        exit 0
+else
+	cp ../Solvation_analysis_template.py .
+	sed -i "s/water_atom='H'/water_atom='"$at1"'/g" Solvation_analysis_template.py
+	sed -i "s/water_atom2='O'/water_atom2='"$at2"'/g" Solvation_analysis_template.py
+	sed -i 's/CL/'$ion'D/g' Solvation_analysis_template.py
+	#sed -i 's/CL/'$ion2'/g' Solvation_analysis_template.py
+	sed -i 's/3.15/'$shellCutOff'/g' Solvation_analysis_template.py
+	sed -i 's/anion/'$type'/g' Solvation_analysis_template.py
+	#sed -i 's/FILLION/'$ion2'/g' Solvation_analysis_template.py
+	sed -i 's/FILLION/'$ion'D/g' Solvation_analysis_template.py
+	sed -i 's/lambda_num=0/lambda_num='$lambda_num'/g' Solvation_analysis_template.py
+	sed -i "s/forback=''/forback='$forback'/g" Solvation_analysis_template.py
+	sed -i 's/TOTALFRAMES/'$totalframes'/g' Solvation_analysis_template.py
+
+
+	python Solvation_analysis_template.py > SolvAn_"$shellCutOff""$forback"_"$totalframes".dat
+fi
+#rm Solvation_analysis_template.py
+
+#END
+
+#qsub -P g15 SolvAn"$ion".job
+#rm  SolvAn"$ion".job
+

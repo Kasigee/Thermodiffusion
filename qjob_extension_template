@@ -1,0 +1,117 @@
+#!/bin/bash
+
+forback=$1
+
+FREE_ENERGY=`pwd`
+MDP=$FREE_ENERGY/MDP
+GMX=/apps/gromacs/2023-gpuvolta/bin
+
+if [[ $forback == '' ]]
+then
+num=$(echo 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20)
+#num=$(echo 0 1 2 9 10 11)
+#num=$(echo 0 9)
+#num=$(echo 0)
+else
+#num=$(echo 20 19 10 11)
+num=$(echo 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0)
+#num=$(echo 20 11)
+#num=$(echo 20)
+fi
+
+
+
+#for i in $num
+#do
+#FinCount=$(grep "Finished mdrun on rank 0" Lambda_"$i"/Production_MD"$forback"/md*.log | wc -l)
+#end_steps=$( tail -n300 Lambda_"$i"/Production_MD"$forback"/md*.log | grep 'Statistics' | awk '{print $3}')
+#echo $end_steps
+#if [[ $FinCount -eq 1 ]] && [[ $end_steps -lt 50000000 ]];
+#then
+#	echo Finished count is currently $FinCount
+#	LAMBDA=$i
+cat <<END > NA."$LAMBDA"."$forback"job
+#!/bin/bash
+#PBS -P g15
+#PBS -l ncpus=12
+#PBS -l ngpus=1
+#PBS -q gpuvolta
+#PBS -l mem=4GB
+#PBS -l walltime=48:00:00
+#PBS -l wd
+#PBS -o NA."$LAMBDA"."$forback".olog
+#PBS -N NA."$LAMBDA"."$forback"job
+#PBS -l storage=scratch/g15+scratch/em52
+
+module load gromacs/2022-gpuvolta
+
+export OMP_NUM_THREADS=12
+
+# Set some environment variables 
+#FREE_ENERGY=`pwd`
+FREE_ENERGY='$FREE_ENERGY'
+echo "Free energy home directory set to $FREE_ENERGY"
+#MDP='$FREE_ENERGY'/MDP
+MDP='$MDP'
+echo ".mdp files are stored in $MDP"
+
+# Change to the location of your GROMACS-2018 installation
+#GMX=/usr/local/gromacs/bin
+GMX=/apps/gromacs/2023-gpuvolta/bin
+
+for i in $num
+do
+    LAMBDA=\$i
+
+    #################
+    # PRODUCTION MD #
+    #################
+    cd "$FREE_ENERGY"/Lambda_\$LAMBDA/Production_MD"$forback"
+    $GMX/gmx convert-tpr -s md\$LAMBDA.tpr -until 10000 -o md\$LAMBDA_extend.tpr
+    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm md\$LAMBDA -s md\$LAMBDA_extend.tpr -cpi md\$LAMBDA.cpt
+    echo "Production MD"$forback" complete."
+#else
+#    # End
+#    echo "Ending. Job completed for lambda = \$LAMBDA"$forback""
+#fi
+done
+    cd $FREE_ENERGY
+END
+
+qsub -P g15 NA."$LAMBDA"."$forback"job
+#else
+#echo "Job already run (qjob_extension script)"
+#fi
+#done
+
+if [ $(ls Lambda_[0-9]/Production_MD"$forback"/md*.xvg Lambda_[0-9][0-9]/Production_MD"$forback"/md*.xvg | wc -l) -ge 21 ]
+then
+if [ ! -f bar_analysis"$forback"_extend.dat ]
+then
+module load gromacs
+gmx bar -f $(ls Lambda_[0-9]/Production_MD"$forback"/md*.xvg Lambda_[0-9][0-9]/Production_MD"$forback"/md*.xvg) -o -oi > bar_analysis"$forback"_extend.dat
+tail -n48 bar_analysis"$forback"_extend.dat
+#echo $1 $2 $3 $4 $5 $6 $7
+#cd $wd
+#exit 0
+else
+tail -n48 bar_analysis"$forback"_extend.dat
+#echo $1 $2 $3 $4 $5 $6
+#cd $wd
+fi
+#exit 0
+fi
+
+
+#if [ $(ls Lambda_*/Production_MD"$forback"/md*.xvg | wc -l) -ge 21 ]
+#then
+#module load gromacs
+#if [ ! -f bar_analysis"$forback".dat ]
+#then
+#gmx bar -f Lambda_*/Production_MD"$forback"/md*.xvg -o -oi > bar_analysis"$forback".dat
+#fi
+#tail -n48 bar_analysis"$forback".dat
+#fi
+
+
+exit

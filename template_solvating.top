@@ -1,0 +1,749 @@
+; Topology for methane in TIP3P
+
+[ defaults ]
+1    2    yes    0.5    0.8333
+
+[ atomtypes ]
+; name    at.num  mass     charge ptype  sigma [nm] epsilon [kJ/mol]
+OW_tip3pfb     8     15.99940     0.000       A    0.317796456355  0.652143528104
+HW_tip3pfb     1      1.00800     0.000       A    0.00000e+00     0.00000e+00
+H_gas          1      1.00800     0.000       A    0.291500000     0.31594954      ;https://pubs.acs.org/doi/10.1021/acs.jced.1c00300 Hirschfelder
+DUMHG          1      0.000       0.000       A    0.000000000     0.000000000
+DOW            8     15.99940     0.000       A    0.317796456355  0.652143528104
+DHW            1      1.00800     0.000       A    0.00000e+00     0.00000e+00
+DUMOW          8      0.0000      0.000       A    0.000000000     0.000000000
+DUMHW          1      0.0000      0.000       A    0.000000000     0.000000000
+LI             3      6.9400      1.000       A    0.224506477     0.011806411     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+NA             11     22.99       1.000       A    0.259964246     0.115455472     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+NC             11     22.99       0.500       A    0.259964246     0.115455472     ; FAKE Na 50% reduced charge
+KA             19     39.0983     1.000       A    0.303796463     0.592381682     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+RB             37     85.4678     1.000       A    0.321079898     0.898552325     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+CS             55     132.9055    1.000       A    0.351014095     1.515335974     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+FL             9      18.99840   -1.000       A    0.32678165      1.010026637     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+FC             9      18.99840   -0.500       A    0.32678165      1.010026637     ; FAKE Fl 50% reduced charge
+CL             17     35.45      -1.000       A    0.40981341      2.669531453     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+BR             35     79.904     -1.000       A    0.442063944     3.139147797     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+IO             54     126.90447  -1.000       A    0.488568857     3.598485977     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+IA             54     126.90447  -1.000       A    0.600000000     3.598485977     ; FAKE IO bigger sigma
+IB             54     126.90447  -1.000       A    0.488568857     4.000000000     ; FAKE IO bigger epsilon
+IC             54     126.90447  -1.000       A    0.488568857     3.000000000     ; FAKE IO smaller epsilon
+IE             54     126.90447  -1.000       A    0.35000000     3.598485977     ; FAKE IO smaller sigma
+BE              4     9.012182    2.000       A    0.162856286     4.22584e-06     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+MG             12     24.305      2.000       A    0.22949551      0.017480208     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+CA             20     40.078      2.000       A    0.271724109     0.198172064     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+SR             38     87.62       2.000       A    0.295600195     0.468168303     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+BA             56     137.327     2.000       A    0.324999852     0.974743509     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+AL             13     26.98154    3.000       A    0.173190711     2.67358e-05     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c01320
+LID            3      6.9400      1.000       A    0.224506477     0.011806411     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMLI          3      0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+NAD            11     22.99       1.000       A    0.259964246     0.115455472     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMNA          11     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+NBD            11     22.99       1.000       A    0.259964246     0.080818830     ; Fake sodium, with "charge transferred away" 30%
+DUMNB          11     0.000       0.000       A    0.000000000     0.000000000     ; Fake sodium, with "charge transferred away"
+NCD            11     22.99       0.500       A    0.259964246     0.115455472     ; FAKE Na 50% reduced charge
+DUMNC          11     0.000       0.000       A    0.000000000     0.000000000     ; REALLY DON'T NEED THESE REPEAT DUMMY ATOMS, but retaining for consistency
+NDD            11     22.99       1.000       A    0.259964246     0.057727736     ; FAKE Na 50% reduced epsilon
+DUMND          11     0.000       0.000       A    0.000000000     0.000000000     ;
+NED            11     22.99       1.000       A    0.259964246     0.230910944     ; FAKE Na 50% increased epsilon
+DUMNE          11     0.000       0.000       A    0.000000000     0.000000000     ;
+KAD            19     39.0983     1.000       A    0.303796463     0.592381682     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMKA          19     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+RBD            37     85.4678     1.000       A    0.321079898     0.898552325     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMRB          37     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+CSD            55     132.9055    1.000       A    0.351014095     1.515335974     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMCS          55     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+FLD            9      18.99840   -1.000       A    0.32678165      1.010026637     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMFL          9      0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+FBD            9      18.99840   -1.000       A    0.32678165      0.707018646     ; Fake fluoride, with "charge transferred away" 30%
+DUMFB          9      0.000       0.000       A    0.000000000     0.000000000     ; Fake fluoride, with "charge transferred away"
+FCD            9      18.99840   -0.500       A    0.32678165      1.010026637     ; FAKE Fl 50% reduced charge
+DUMFC          9      0.000       0.000       A    0.000000000     0.000000000     ; 
+FDD            9      18.99840   -1.000       A    0.32678165      0.505013319     ; FAKE Fl 50% reduced epsilon
+DUMFD          9      0.000       0.000       A    0.000000000     0.000000000     ;
+FED            9      18.99840   -1.000       A    0.32678165      2.020053274     ; FAKE Fl 50% increased epsilon
+DUMFE          9      0.000       0.000       A    0.000000000     0.000000000     ;
+CLD            17     35.45      -1.000       A    0.40981341      2.669531453     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMCL          17     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+BRD            35     79.904     -1.000       A    0.442063944     3.139147797     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMBR          35     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+IOD            54     126.90447  -1.000       A    0.488568857     3.598485977     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+DUMIO          54     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+IAD            54     126.90447  -1.000       A    0.600000000     3.598485977     ; FAKE IOD bigger sigma
+DUMIA          54     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+IBD            54     126.90447  -1.000       A    0.488568857     4.000000000     ; FAKE IOD bigger epsilon
+DUMIB          54     0.000       0.000       A    0.000000000     0.000000000     ; https://pubs.acs.org/doi/10.1021/acs.jcim.0c01390
+ICD            54     126.90447  -1.000       A    0.488568857     3.000000000     ; FAKE IOD smaller epsilon
+DUMIC          54     0.000       0.000       A    0.000000000     0.000000000     ; 
+IED            54     126.90447  -1.000       A    0.350000000     3.598485977     ; FAKE IOD smaller sigma
+DUMIE          54     0.000       0.000       A    0.000000000     0.000000000     ;
+IFD            54     126.90447  -0.500       A    0.488568857     3.598485977     ; FAKE IOD smaller charge
+DUMIF          54     0.000       0.000       A    0.000000000     0.000000000     ; 
+IGD            54     126.90447  -2.000       A    0.488568857     3.598485977     ; FAKE IOD larger charge
+DUMIG          54     0.000       0.000       A    0.000000000     0.000000000     ; 
+ALD            13     26.98154    3.000       A    0.173190711     2.67358e-05     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c01320
+DUMAL          13     0.000       0.000       A    0.000000000     0.000000000     ;
+BED             4     9.012182    2.000       A    0.162856286     4.22584e-06     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+DUMBE           4     0.000       0.000       A    0.000000000     0.000000000     ;
+MGD            12     24.305      2.000       A    0.22949551      0.017480208     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+DUMMG          12     0.000       0.000       A    0.000000000     0.000000000     ;
+CAD            20     40.078      2.000       A    0.271724109     0.198172064     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+DUMCA          20     0.000       0.000       A    0.000000000     0.000000000     ;
+SRD            38     87.62       2.000       A    0.295600195     0.468168303     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+DUMSR          38     0.000       0.000       A    0.000000000     0.000000000     ;
+BAD            56     137.327     2.000       A    0.324999852     0.974743509     ; https://pubs.acs.org/doi/full/10.1021/acs.jctc.0c00194
+DUMBA          56     0.000       0.000       A    0.000000000     0.000000000     ;
+opls_138  	6    12.01100    -0.240       A    3.50000e-01     2.76144e-01       ; https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffnonbonded.itp
+opls_140   	1     1.00800     0.060       A    2.50000e-01     1.25520e-01       ; https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffnonbonded.itp
+DUMMC           6     0.000       0.000       A    0.000000000     0.000000000       ; https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffnonbonded.itp
+DUMMH           1     0.000       0.000       A    0.000000000     0.000000000       ; https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffnonbonded.itp
+
+
+;[ bondtypes ]
+;; i    j  func       b0          kb
+; CT    HC      1    0.10900   284512.0   ; CHARMM 22 parameter file https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffbonded.itp
+
+;[ angletypes ]
+;;  i    j    k  func       th0       cth
+; HC     CT     HC      1   107.800    276.144   ; CHARMM 22 parameter file https://github.com/wesbarnett/lopls/blob/master/oplsaa.ff/ffbonded.itp
+
+;update with extra ion params
+
+; Define SOL molecule type
+[ moleculetype ]
+; molname       nrexcl
+SOL        2
+
+[ atoms ]
+     1  OW_tip3pfb   1    SOL     OW      1      -0.848448 15.99940
+     2  HW_tip3pfb   1    SOL    HW1      1       0.424224 1.00800
+     3  HW_tip3pfb   1    SOL    HW2      1       0.424224 1.00800
+
+; Water constraints
+#ifndef FLEXIBLE
+[ settles ]
+1    1    0.101181082494    0.163868385147
+#else
+[ bonds ]
+; Force constants copied from amber99sb-ildn.ff/ffbonded.itp .
+; This is a rigid water model - do NOT use flexible parameters
+1    2    1    0.101181082494   462750.4
+1    3    1    0.101181082494   462750.4
+
+[ angles ]
+; Force constants copied from amber99sb-ildn.ff/ffbonded.itp .
+; This is a rigid water model - do NOT use flexible parameters
+2    1    3    1    108.14844252012414    836.800
+#endif
+
+; Water exclusions
+[ exclusions ]
+1    2    3
+2    1    3
+3    1    2
+
+; Define SOL molecule type
+[ moleculetype ]
+; molname       nrexcl
+DIS        2
+
+[ atoms ]
+     1  DOW           1    DIS     OW      1      -0.848448 15.99940 DUMOW  0 15.99940
+     2  DHW           1    DIS    HW1      1       0.424224 1.00800 DUMHW  0 1.00800
+     3  DHW           1    DIS    HW2      1       0.424224 1.00800 DUMHW  0 1.00800
+; Water constraints
+[ bonds ]
+; Force constants copied from amber99sb-ildn.ff/ffbonded.itp .
+; This is a rigid water model - do NOT use flexible parameters
+1    2    1    0.101181082494   462750.4
+1    3    1    0.101181082494   462750.4
+
+[ angles ]
+; Force constants copied from amber99sb-ildn.ff/ffbonded.itp .
+; This is a rigid water model - do NOT use flexible parameters
+2    1    3    1    108.14844252012414    836.800
+
+; Water exclusions
+[ exclusions ]
+1    2    3
+2    1    3
+3    1    2
+
+[ moleculetype ]
+; Name                       nrexcl
+MED                      3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB  massB
+     1   opls_138      1   MED      CB      1      0.000       12.011  DUMMC 0 12.011 
+     2   opls_140      1   MED     HB1      2      0.000       1.008   DUMMH 0 1.008
+     3   opls_140      1   MED     HB2      3      0.000       1.008   DUMMH 0 1.008
+     4   opls_140      1   MED     HB3      4      0.000       1.008   DUMMH 0 1.008
+     5   opls_140      1   MED     HB4      5      0.000       1.008   DUMMH 0 1.008
+
+[ bonds ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     2     1     0.10900   284512.0
+    1     3     1     0.10900   284512.0
+    1     4     1     0.10900   284512.0
+    1     5     1     0.10900   284512.0
+
+[ angles ]
+;  ai    aj    ak funct            c0            c1            c2            c3
+    2     1     3     1 107.800    276.144 
+    2     1     4     1 107.800    276.144 
+    2     1     5     1 107.800    276.144 
+    3     1     4     1 107.800    276.144 
+    3     1     5     1 107.800    276.144 
+    4     1     5     1 107.800    276.144 
+
+
+[ moleculetype ]
+; Name                       nrexcl
+NFC                      3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB  massB
+     1        NAD      1   NFC     NA1      1      1.000       22.99      DUMNA 0 22.99
+     2        FLD      1   NFC     FL1      2     -1.000       18.99840   DUMFL 0 18.99840
+     3        NAD      1   NFC     NA2      3      1.000       22.99      DUMNA 0 22.99
+     4        FLD      1   NFC     FL2      4     -1.000       18.99840   DUMFL 0 18.99840
+     5        NAD      1   NFC     NA3      5      1.000       22.99      DUMNA 0 22.99
+     6        FLD      1   NFC     FL3      6     -1.000       18.99840   DUMFL 0 18.99840
+     7        NAD      1   NFC     NA4      7      1.000       22.99      DUMNA 0 22.99
+     8        FLD      1   NFC     FL4      8     -1.000       18.99840   DUMFL 0 18.99840
+
+
+[ bonds ]
+    1     2     10       0     0.23     0.28       10000
+    1     4     10       0     0.23     0.28       10000
+    1     6     10       0     0.23     0.28       10000
+    2     3     10       0     0.23     0.28       10000
+    2     7     10       0     0.23     0.28       10000
+    3     4     10       0     0.23     0.28       10000
+    3     8     10       0     0.23     0.28       10000
+    4     5     10       0     0.23     0.28       10000
+    5     6     10       0     0.23     0.28       10000
+    5     8     10       0     0.23     0.28       10000
+    6     7     10       0     0.23     0.28       10000
+    7     8     10       0     0.23     0.28       10000
+
+;[ angles ]
+;;  ai    aj    ak funct            c0            c1            c2            c3
+;    2     1     3     1 107.800    276.144
+;    2     1     4     1 107.800    276.144
+;    2     1     5     1 107.800    276.144
+;    3     1     4     1 107.800    276.144
+;    3     1     5     1 107.800    276.144
+;    4     1     5     1 107.800    276.144
+
+
+; Define H2D molecule type
+[ moleculetype ]
+; molname       nrexcl
+H2D        1
+
+[ atoms ]
+1  H_gas   1   H2D    HG1     1   0.00000 1.00800 DUMHG 0 1.00800
+2  H_gas   1   H2D    HG2   1   0.00000 1.00800 DUMHG 0 1.00800
+
+[ bonds ]
+1    2    1    0.074     462750.4
+
+
+; Define NACLD molecule type
+[ moleculetype ]
+; molname       nrexcl
+SAL        1
+
+
+
+; Define LI molecule type
+[ moleculetype ]
+; molname       nrexcl
+LI        1
+
+[ atoms ]
+1  LI    1   LI    LI    1   1.00000 6.9400
+
+; Define NA molecule type
+[ moleculetype ]
+; molname       nrexcl
+NA        1
+
+[ atoms ]
+1  NA    1   NA    NA    1   1.00000 22.99
+
+; Define KA molecule type
+[ moleculetype ]
+; molname       nrexcl
+KA         1
+
+[ atoms ]
+1  KA     1   KA     KA     1   1.00000 39.0983
+
+; Define RB molecule type
+[ moleculetype ]
+; molname       nrexcl
+RB         1
+
+[ atoms ]
+1  RB     1   RB     RB     1   1.00000 85.4678
+
+; Define CS molecule type
+[ moleculetype ]
+; molname       nrexcl
+CS         1
+
+[ atoms ]
+1  CS     1   CS     CS     1   1.00000 132.9055
+
+; Define FL  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FL         1
+
+[ atoms ]
+1  FL     1   FL     FL     1  -1.00000 18.99840
+
+; Define CL molecule type
+[ moleculetype ]
+; molname       nrexcl
+CL        1
+
+[ atoms ]
+1  CL    1   CL    CL    1  -1.00000 35.45
+
+; Define BR molecule type
+[ moleculetype ]
+; molname       nrexcl
+BR        1
+
+[ atoms ]
+1  BR    1   BR    BR    1  -1.00000 79.904
+
+; Define IO molecule type
+[ moleculetype ]
+; molname       nrexcl
+IO        1
+
+[ atoms ]
+1  IO    1   IO    IO    1  -1.00000 126.9045
+
+; Define IO molecule type
+[ moleculetype ]
+; molname       nrexcl
+IA        1
+
+[ atoms ]
+1  IA    1   IA    IA    1  -1.00000 126.9045
+
+; Define IO molecule type
+[ moleculetype ]
+; molname       nrexcl
+IB        1
+
+[ atoms ]
+1  IB    1   IB    IB    1  -1.00000 126.9045
+
+; Define IC molecule type
+[ moleculetype ]
+; molname       nrexcl
+IC        1
+
+[ atoms ]
+1  IC    1   IC    IC    1  -1.00000 126.9045
+
+; Define IE molecule type
+[ moleculetype ]
+; molname       nrexcl
+IE        1
+
+[ atoms ]
+1  IE    1   IE    IE    1  -1.00000 126.9045
+
+
+; Define BE molecule type
+[ moleculetype ]
+; molname       nrexcl
+BE        1
+
+[ atoms ]
+1  BE    1   BE    BE    1   2.00000 9.012182
+
+; Define MG molecule type
+[ moleculetype ]
+; molname       nrexcl
+MG        1
+
+[ atoms ]
+1  MG    1   MG    MG    1   2.00000 24.305
+
+; Define CA molecule type
+[ moleculetype ]
+; molname       nrexcl
+CA        1
+
+[ atoms ]
+1  CA    1   CA    CA    1   2.00000 40.078
+
+
+; Define SR molecule type
+[ moleculetype ]
+; molname       nrexcl
+SR        1
+
+[ atoms ]
+1  SR    1   SR    SR    1   2.00000 87.62
+
+; Define BA molecule type
+[ moleculetype ]
+; molname       nrexcl
+BA        1
+
+[ atoms ]
+1  BA    1   BA    BA    1   2.00000 137.327
+
+; Define AL molecule type
+[ moleculetype ]
+; molname       nrexcl
+AL        1
+
+[ atoms ]
+1  AL    1   AL    AL    1   3.00000 26.9815385
+
+; Define LID molecule type
+[ moleculetype ]
+; molname       nrexcl
+LID        1
+
+[ atoms ]
+1  LID    1   LID    LID    1   1.00000 6.9400 DUMLI 0 6.9400
+
+; Define NAD molecule type
+[ moleculetype ]
+; molname       nrexcl
+NAD        1
+
+[ atoms ]
+1  NAD    1   NAD    NAD    1   1.00000 22.99 DUMNA 0 22.9898
+
+; Define NBD molecule type
+[ moleculetype ]
+; molname       nrexcl
+NBD        1
+
+[ atoms ]
+1  NBD    1   NBD    NBD    1   1.00000 22.99 DUMNB 0 22.9898
+
+; Define NCD molecule type
+[ moleculetype ]
+; molname       nrexcl
+NCD        1
+
+[ atoms ]
+1  NCD    1   NCD    NCD    1   0.50000 22.99 DUMNC 0 22.9898
+
+; Define NDD molecule type
+[ moleculetype ]
+; molname       nrexcl
+NDD        1
+
+[ atoms ]
+1  NDD    1   NDD    NDD    1   1.0000 22.99 DUMND 0 22.9898
+
+; Define NED molecule type
+[ moleculetype ]
+; molname       nrexcl
+NED        1
+
+[ atoms ]
+1  NED    1   NED    NED    1   1.0000 22.99 DUMNE 0 22.9898
+
+
+; Define KAD molecule type
+[ moleculetype ]
+; molname       nrexcl
+KAD         1
+
+[ atoms ]
+1  KAD     1   KAD     KAD     1   1.00000 39.0983 DUMKA 0 39.0983
+
+; Define RBD molecule type
+[ moleculetype ]
+; molname       nrexcl
+RBD         1
+
+[ atoms ]
+1  RBD     1   RBD     RBD     1   1.00000 85.4678 DUMRB 0 85.4678
+
+; Define CSD molecule type
+[ moleculetype ]
+; molname       nrexcl
+CSD         1
+
+[ atoms ]
+1  CSD     1   CSD     CSD     1   1.00000 132.9055 DUMCS 0 132.9055
+
+; Define FLD  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FLD         1
+
+[ atoms ]
+1  FLD     1   FLD     FLD     1  -1.00000 18.99840 DUMFL 0 18.99840
+
+
+; Define FBD  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FBD         1
+
+[ atoms ]
+1  FBD     1   FBD     FBD     1  -1.00000 18.99840 DUMFB 0 18.99840
+
+; Define FCD  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FCD         1
+
+[ atoms ]
+1  FCD     1   FCD     FCD     1  -0.50000 18.99840 DUMFC 0 18.99840
+
+; Define FDD  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FDD         1
+
+[ atoms ]
+1  FDD     1   FDD     FDD     1  -1.00000 18.99840 DUMFD 0 18.99840
+
+; Define FED  molecule type
+[ moleculetype ]
+; molname       nrexcl
+FED         1
+
+[ atoms ]
+1  FED     1   FED     FED     1  -1.00000 18.99840 DUMFE 0 18.99840
+
+
+; Define CLD molecule type
+[ moleculetype ]
+; molname       nrexcl
+CLD        1
+
+[ atoms ]
+1  CLD    1   CLD    CLD    1  -1.00000 35.45 DUMCL 0 35.4500
+
+; Define BRD molecule type
+[ moleculetype ]
+; molname       nrexcl
+BRD        1
+
+[ atoms ]
+1  BRD    1   BRD    BRD    1  -1.00000 79.904 DUMBR 0 79.904
+
+; Define IOD molecule type
+[ moleculetype ]
+; molname       nrexcl
+IOD        1
+
+[ atoms ]
+1  IOD    1   IOD    IOD    1  -1.00000 126.9045 DUMIO 0 126.9045
+
+; Define IAD molecule type
+[ moleculetype ]
+; molname       nrexcl
+IAD        1
+
+[ atoms ]
+1  IAD    1   IAD    IAD    1  -1.00000 126.9045 DUMIA 0 126.9045
+
+; Define IBD molecule type
+[ moleculetype ]
+; molname       nrexcl
+IBD        1
+
+[ atoms ]
+1  IBD    1   IBD    IBD    1  -1.00000 126.9045 DUMIB 0 126.9045
+
+; Define ICD molecule type
+[ moleculetype ]
+; molname       nrexcl
+ICD        1
+
+[ atoms ]
+1  ICD    1   ICD    ICD    1  -1.00000 126.9045 DUMIC 0 126.9045
+
+; Define IED molecule type
+[ moleculetype ]
+; molname       nrexcl
+IED        1
+
+[ atoms ]
+1  IED    1   IED    IED    1  -1.00000 126.9045 DUMIE 0 126.9045
+
+; Define IFD molecule type
+[ moleculetype ]
+; molname       nrexcl
+IFD        1
+
+[ atoms ]
+1  IFD    1   IFD    IFD    1  -0.50000 126.9045 DUMIF 0 126.9045
+
+; Define IGD molecule type
+[ moleculetype ]
+; molname       nrexcl
+IGD        1
+
+[ atoms ]
+1  IGD    1   IGD    IGD    1  -2.00000 126.9045 DUMIG 0 126.9045
+
+
+; Define BED molecule type
+[ moleculetype ]
+; molname       nrexcl
+BED        1
+
+[ atoms ]
+1  BED    1   BED    BED    1   2.00000 9.012182 DUMBE 0 9.012182
+
+; Define MGD molecule type
+[ moleculetype ]
+; molname       nrexcl
+MGD        1
+
+[ atoms ]
+1  MGD    1   MGD    MGD    1   2.00000 24.305 DUMMG 0 24.305
+
+; Define CAD molecule type
+[ moleculetype ]
+; molname       nrexcl
+CAD        1
+
+[ atoms ]
+1  CAD    1   CAD    CAD    1   2.00000 40.078 DUMCA 0 40.078
+
+
+; Define SRD molecule type
+[ moleculetype ]
+; molname       nrexcl
+SRD        1
+
+[ atoms ]
+1  SRD    1   SRD    SRD    1   2.00000 87.62 DUMSR 0 87.62
+
+; Define BAD molecule type
+[ moleculetype ]
+; molname       nrexcl
+BAD        1
+
+[ atoms ]
+1  BAD    1   BAD    BAD    1   2.00000 137.327 DUMBA 0 137.327
+
+; Define ALD molecule type
+[ moleculetype ]
+; molname       nrexcl
+ALD        1
+
+[ atoms ]
+1  ALD    1   ALD    ALD    1   3.00000 26.9815385 DUMAL 0 26.9815385
+
+
+; Define US molecule type
+[ moleculetype ]
+; molname       nrexcl
+US         2
+
+[ atoms ]
+     1  OW_tip3pfb   1    US     UOW      1      -0.848448
+     2  HW_tip3pfb   1    US    UHW1      1       0.424224
+     3  HW_tip3pfb   1    US    UHW2      1       0.424224
+
+#ifdef POSRES_U
+; Position restraint for each water oxygen
+[ position_restraints ]
+;;  i funct       fcx        fcy        fcz
+;1       1       0       0       1000
+;  i funct       fcx        fcy        fcz
+1       2       5       0.3       500
+2       2       5       0.3       500
+3       2       5       0.3       500
+
+#endif
+
+; Constraints for US
+#ifndef FLEXIBLE
+;[ settles ]
+;1    1    0.101181082494    0.163868385147
+;[ constraints ]
+;6 7 1 0.1
+;6 8 1 0.1
+;7 8 1 0.16330
+[ constraints ]
+1 2 1 0.10118
+1 3 1 0.10118
+2 3 1 0.16386
+
+#else
+; Copy the bonds and angles sections from the SOL molecule type if needed
+#endif
+
+; Exclusions for US
+[ exclusions ]
+1    2    3
+2    1    3
+3    1    2
+
+; Define TS molecule type
+[ moleculetype ]
+; molname       nrexcl
+TS         2
+
+[ atoms ]
+     1  OW_tip3pfb   1    TS     TOW      1      -0.848448
+     2  HW_tip3pfb   1    TS    THW1      1       0.424224
+     3  HW_tip3pfb   1    TS    THW2      1       0.424224
+
+#ifdef POSRES_T
+; Position restraint for each water oxygen
+[ position_restraints ]
+;;  i funct       fcx        fcy        fcz
+;1       1       0       0       1000
+;  i funct       fcx        fcy        fcz
+1       2       5       0.3       500
+2       2       5       0.3       500
+3       2       5       0.3       500
+
+#endif
+
+
+; Constraints for TS
+#ifndef FLEXIBLE
+;[ settles ]
+;1    1    0.101181082494    0.163868385147
+[ constraints ]
+1 2 1 0.10118
+1 3 1 0.10118
+2 3 1 0.16386
+
+;[ constraints ]
+;9 10 1 0.1
+;9 11 1 0.1
+;10 11 1 0.16330
+#else
+; Copy the bonds and angles sections from the SOL molecule type if needed
+#endif
+
+; Exclusions for TS
+[ exclusions ]
+1    2    3
+2    1    3
+3    1    2
+
+
+[ system ]
+; Name
+ in water
+
+[ molecules ]
+; Compound             #mols

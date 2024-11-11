@@ -1,0 +1,82 @@
+#!/bin/bash
+
+
+if [ $# -ne 4 ]
+then
+echo "$0 cation anion type shellCutOff"
+exit 0
+fi
+
+
+cation=$1
+anion=$2
+type=$3
+shellCutOff=$4
+
+cation=$(echo "$cation" | tr '[:lower:]' '[:upper:]')
+anion=$(echo "$anion" | tr '[:lower:]' '[:upper:]')
+
+cation2=$cation
+anion2=$anion
+if [ $cation == 'KA' ]
+then
+cation2='K'
+fi
+if [ $anion == 'FL' ]
+then
+anion2='F'
+elif [ $anion == 'IO' ]
+then
+anion2='I'
+fi
+
+
+
+if [ -f IonPair_"$shellCutOff".dat ]
+then
+	echo IonPair_"$shellCutOff".dat exists
+	cat IonPair_"$shellCutOff".dat
+	exit 0
+fi
+
+
+FREE_ENERGY=`pwd`
+
+#cat <<END > SolvAn"$ion".job
+##!/bin/bash
+##PBS -P g15
+##PBS -l ncpus=12
+##PBS -q normal
+##PBS -l mem=4GB
+##PBS -l walltime=1:00:00
+##PBS -l wd
+##PBS -o SolvAn."$LAMBDA"."$forback".olog
+##PBS -N SolvAn."$LAMBDA"."$forback"job
+##PBS -l storage=scratch/g15
+#
+#export OMP_NUM_THREADS=12
+
+cd $FREE_ENERGY
+#totalframes=$(echo "$(tail -n1000 Lambda_0/Production_MD/md0.log | grep -w 'time:' | awk '{print $2}' | awk -F'.' '{print $1}' ) " | bc )
+#totalframes=$(echo "$(tail -n1000 Lambda_0/Production_MD/md0.log | grep 'Writing checkpoint, step' | awk '{print $4}' ) * 2" | bc )
+totalframes=$(tail -n1000 Lambda_0/Production_MD/md0.log | grep -w 'time:' | awk '{print $2}' | awk -F'.' '{print $1}')
+echo $totalframes
+cp ../ionpair_analysis_template.py ionpair_analysis_template2.py
+sed -i "s/ion_at='NA'/ion_at='"$cation"'/g" ionpair_analysis_template2.py
+sed -i "s/anion_at='CL'/anion_at='"$anion"'/g" ionpair_analysis_template2.py
+#sed -i 's/CL/'$ion'/g' ionpair_analysis_template2.py
+sed -i 's/DIST/'$shellCutOff'/g' ionpair_analysis_template2.py
+#sed -i 's/anion/'$type'/g' ionpair_analysis_template2.py
+sed -i 's/TOTALFRAMES/'$totalframes'/g' ionpair_analysis_template2.py
+sed -i 's/FILLCATION/'$cation2'/g' ionpair_analysis_template2.py
+sed -i 's/FILLANION/'$anion2'/g' ionpair_analysis_template2.py
+
+python ionpair_analysis_template2.py > IonPair_"$shellCutOff".dat
+
+rm ionpair_analysis_template2.py
+
+#END
+
+#qsub -P g15 SolvAn"$ion".job
+#rm  SolvAn"$ion".job
+
