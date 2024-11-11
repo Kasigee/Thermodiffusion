@@ -1,27 +1,30 @@
 #!/bin/bash
 
+forback=$1
+
 FREE_ENERGY=`pwd`
 MDP=$FREE_ENERGY/MDP
 GMX=/apps/gromacs/2023-gpuvolta/bin
 
-for (( i=0; i<21; i++ ))
-do
-if ! grep "Finished mdrun on rank 0" Lambda_"$i"/Production_MD/md"$i".log
+#for (( i=0; i<21; i++ ))
+#do
+#FinCount=$(grep "Finished mdrun on rank 0" Lambda_*/Production_MD"$forback"/md*.log | wc -l )
+FinCount=$(grep -l "Finished mdrun on rank 0" Lambda_[0-9]/Production_MD"$forback"/md*.log Lambda_[0-9][0-9]/Production_MD"$forback"/md*.log |  wc -l)
+echo FinCount = $FinCount
+if [ $FinCount -lt 21 ]
 then
-	echo Lambda $i not finished - running
-	LAMBDA=$i
-#	exit 0
-cat <<END > job"$i".job
+	echo Finished count is currently $FinCount
+cat <<END > job"$forback".job
 #!/bin/bash
-#PBS -P em52
+#PBS -P g15
 #PBS -l ncpus=12
 #PBS -l ngpus=1
 #PBS -q gpuvolta
-#PBS -l mem=48GB
-#PBS -l walltime=12:00:00
+#PBS -l mem=4GB
+#PBS -l walltime=15:00:00
 #PBS -l wd
-#PBS -o NA"$i".olog
-#PBS -N NA"$i".job
+#PBS -o NA."$forback".olog
+#PBS -N NA."$forback"job
 #PBS -l storage=scratch/g15+scratch/em52
 
 module load gromacs/2022-gpuvolta
@@ -29,41 +32,47 @@ module load gromacs/2022-gpuvolta
 export OMP_NUM_THREADS=12
 
 # Set some environment variables 
-FREE_ENERGY=`pwd`
+#FREE_ENERGY=`pwd`
+FREE_ENERGY='$FREE_ENERGY'
 echo "Free energy home directory set to $FREE_ENERGY"
-MDP=$FREE_ENERGY/MDP
+#MDP='$FREE_ENERGY'/MDP
+MDP='$MDP'
 echo ".mdp files are stored in $MDP"
 
 # Change to the location of your GROMACS-2018 installation
 #GMX=/usr/local/gromacs/bin
 GMX=/apps/gromacs/2023-gpuvolta/bin
 
-#for (( i=0; i<21; i++ ))
-#do
-    LAMBDA=$i
+for (( i=0; i<21; i++ ))
+do
+    LAMBDA=\$i
 
     # A new directory will be created for each value of lambda and
     # at each step in the workflow for maximum organization.
 
-    mkdir Lambda_$LAMBDA
-    cd Lambda_$LAMBDA
+    mkdir '$FREE_ENERGY'/Lambda_\$LAMBDA
+    cd '$FREE_ENERGY'/Lambda_\$LAMBDA
 
+    if ! grep 'Finished mdrun' ../Production_MD"$forback"/md\$LAMBDA.log
+        then
+    
     ##############################
     # ENERGY MINIMIZATION STEEP  #
     ##############################
-    echo "Starting minimization for lambda = $LAMBDA..." 
+    echo "Starting minimization for lambda = \$LAMBDA..." 
 
-    mkdir EM
-    cd EM
+    mkdir EM"$forback"
+    cd EM"$forback"
 
     # Iterative calls to grompp and mdrun to run the simulations
-    if ! grep 'Finished mdrun' min$LAMBDA.log
+    if ! grep 'Finished mdrun' min\$LAMBDA.log && ! grep 'Finished mdrun' ../NVT/nvt\$LAMBDA.log && ! grep 'Finished mdrun' ../NPT/npt\$LAMBDA.log && ! grep 'Finished mdrun' ../Production_MD"$forback"/md\$LAMBDA.log
 	then
-    $GMX/gmx grompp -f $MDP/EM/em_steep_$LAMBDA.mdp -c $FREE_ENERGY/NA_water_fixed.gro -p $FREE_ENERGY/topol.top -o min$LAMBDA.tpr -maxwarn 2
-    $GMX/gmx mdrun -deffnm min$LAMBDA -ntmpi 1 -ntomp 12
+    $GMX/gmx grompp -f $MDP/EM"$forback"/em_steep_\$LAMBDA.mdp -c $FREE_ENERGY/NA_water_fixed.gro -p $FREE_ENERGY/topol.top -o min\$LAMBDA.tpr -maxwarn 2
+    $GMX/gmx mdrun -deffnm min\$LAMBDA -ntmpi 1 -ntomp 12
+#    $GMX/gmx mdrun -s min\$LAMBDA.tpr -nt 1 -v -c min\$LAMBDA.gro
     sleep 1
 else
-	echo "Minimisation EM$LAMBDA complete."
+	echo "Minimisation EM\$LAMBDA"$forback" complete."
 fi
 
     #####################
@@ -72,19 +81,19 @@ fi
     echo "Starting constant volume equilibration..."
 
     cd ../
-    mkdir NVT
-    cd NVT
-    if ! grep 'Finished mdrun' nvt$LAMBDA.log
+    mkdir NVT"$forback"
+    cd NVT"$forback"
+    if ! grep 'Finished mdrun' nvt\$LAMBDA.log && ! grep 'Finished mdrun' ../NPT/npt\$LAMBDA.log && ! grep 'Finished mdrun' ../Production_MD"$forback"/md\$LAMBDA.log
         then
-    $GMX/gmx grompp -f $MDP/NVT/nvt_$LAMBDA.mdp -c ../EM/min$LAMBDA.gro -p $FREE_ENERGY/topol.top -o nvt$LAMBDA.tpr -maxwarn 2
-    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm nvt$LAMBDA
-#    $GMX/gmx mdrun -s nvt$LAMBDA.tpr -nt 1 -v -c nvt$LAMBDA.gro
+    $GMX/gmx grompp -f $MDP/NVT"$forback"/nvt_\$LAMBDA.mdp -c ../EM"$forback"/min\$LAMBDA.gro -p $FREE_ENERGY/topol.top -o nvt\$LAMBDA.tpr -maxwarn 2
+    rm -r ../EM"$forback"/
+    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm nvt\$LAMBDA
+#    $GMX/gmx mdrun -s nvt\$LAMBDA.tpr -nt 1 -v -c nvt\$LAMBDA.gro
     echo "Constant volume equilibration complete."
     sleep 1
 else
-	echo "Constant volume equilibration NVT$LAMBDA complete."
+	echo "Constant volume equilibration NVT\$LAMBDA"$forback" complete."
 fi
-
 
     #####################
     # NPT EQUILIBRATION #
@@ -92,51 +101,87 @@ fi
     echo "Starting constant pressure equilibration..."
 
     cd ../
-    mkdir NPT
-    cd NPT
-    if ! grep 'Finished mdrun' npt$LAMBDA.log
+    mkdir NPT"$forback"
+    cd NPT"$forback"
+    if ! grep 'Finished mdrun' npt\$LAMBDA.log  && ! grep 'Finished mdrun' ../Production_MD"$forback"/md\$LAMBDA.log
 then
-    $GMX/gmx grompp -f $MDP/NPT/npt_$LAMBDA.mdp -c ../NVT/nvt$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NVT/nvt$LAMBDA.cpt -o npt$LAMBDA.tpr -maxwarn 2
-    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm npt$LAMBDA
-#    $GMX/gmx mdrun -s npt$LAMBDA.tpr -nt 1 -v -c npt$LAMBDA.gro
+    $GMX/gmx grompp -f $MDP/NPT"$forback"/npt_\$LAMBDA.mdp -c ../NVT"$forback"/nvt\$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NVT"$forback"/nvt\$LAMBDA.cpt -o npt\$LAMBDA.tpr -maxwarn 2
+    rm -r ../NVT"$forback"/
+    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm npt\$LAMBDA
+#    $GMX/gmx mdrun -s npt\$LAMBDA.tpr -nt 1 -v -c npt\$LAMBDA.gro
     echo "Constant pressure equilibration complete."
     sleep 1
 else
-	echo "Constant pressure equilibration NPT$LAMBDA complete."
+	echo "Constant pressure equilibration NPT\$LAMBDA"$forback" complete."
 fi
 
+#    boxcutoff=\$( echo "scale =3; 1 npt\$LAMBDA.gro | awk '{print \$1}') / 2 - 0.1" | bc -l)
     #################
     # PRODUCTION MD #
     #################
     echo "Starting production MD simulation..."
 
     cd ../
-    mkdir Production_MD
-    cd Production_MD
-if ! grep 'Finished mdrun' md$LAMBDA.log
+    mkdir Production_MD"$forback"
+    cd Production_MD"$forback"
+#if ! grep 'Finished mdrun' md\$LAMBDA.log || ! grep '1000000' md\$LAMBDA.log
+if ! grep 'Finished mdrun' md\$LAMBDA.log 
 then
-    $GMX/gmx grompp -f $MDP/Production_MD/md_$LAMBDA.mdp -c ../NPT/npt$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NPT/npt$LAMBDA.cpt -o md$LAMBDA.tpr -maxwarn 2
-    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm md$LAMBDA
-    echo "Production MD complete."
+#    sed -i 's/rvdw                     = 1.4/rvdw                     = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
+#    sed -i 's/rlist                    = 1.4/rlist                    = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
+#    sed -i 's/rcoulomb                 = 1.4/rcoulomb                 = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
+    $GMX/gmx grompp -f $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp -c ../NPT"$forback"/npt\$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NPT"$forback"/npt\$LAMBDA.cpt -o md\$LAMBDA.tpr -maxwarn 2
+    rm -r ../NPT"$forback"/
+    $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm md\$LAMBDA
+#    $GMX/gmx mdrun -s md\$LAMBDA.tpr -nt 1 -v -c md\$LAMBDA.gro
+    echo "Production MD"$forback" complete."
 else
     # End
-    echo "Ending. Job completed for lambda = $LAMBDA"
+    echo "Ending. Job completed for lambda = \$LAMBDA"$forback""
 fi
-
+else
+    # End
+    echo "Ending. Job completed for lambda = \$LAMBDA"$forback""
+fi
+done
     cd $FREE_ENERGY
 END
 
-qsub -P em52 job"$i".job
+qsub -P g15 job"$forback".job
 else
-echo Lambda $i job already run	
+echo Job already run	
 fi
-done
 
-if [ $(ls Lambda_*/Production_MD/md*.xvg | wc -l) -ge 21 ]
+
+if [ $(ls Lambda_[0-9]/Production_MD"$forback"/md*.xvg Lambda_[0-9][0-9]/Production_MD"$forback"/md*.xvg | wc -l) -ge 21 ]
+then
+#echo rm Lambda_[0-9]/EM Lambda_[0-9][0-9]/EM
+if [ ! -f bar_analysis"$forback".dat ]
 then
 module load gromacs
-gmx bar -f Lambda_*/Production_MD/md*.xvg -o -oi
+gmx bar -f $(ls Lambda_[0-9]/Production_MD"$forback"/md*.xvg Lambda_[0-9][0-9]/Production_MD"$forback"/md*.xvg) -o -oi > bar_analysis"$forback".dat
+tail -n48 bar_analysis"$forback".dat
+#echo $1 $2 $3 $4 $5 $6 $7
+#cd $wd
+#exit 0
+else
+tail -n48 bar_analysis"$forback".dat
+#echo $1 $2 $3 $4 $5 $6
+#cd $wd
 fi
+#exit 0
+fi
+
+
+#if [ $(ls Lambda_*/Production_MD"$forback"/md*.xvg | wc -l) -ge 21 ]
+#then
+#module load gromacs
+#if [ ! -f bar_analysis"$forback".dat ]
+#then
+#gmx bar -f Lambda_*/Production_MD"$forback"/md*.xvg -o -oi > bar_analysis"$forback".dat
+#fi
+#tail -n48 bar_analysis"$forback".dat
+#fi
 
 
 exit
