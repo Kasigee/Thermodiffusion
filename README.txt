@@ -4,7 +4,7 @@ Permissions for scripts need to be changed to enable them to be executable:
 chmod +x run_GROMACS_FEP.sh
 chmod +x template_files/qjob
 
-To run the initial script:
+To run the initial script, edit the script to use your username and use the following format:
 ./run_GROMACS_FEP.sh cation anion concentration(M) temperature(K) total_time(ns) FEP_direction(forward_or_bakward) replicate_number parallel boxsize(nm) force(yes/no)
 
 for example
