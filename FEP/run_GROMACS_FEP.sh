@@ -1,6 +1,13 @@
 #!/bin/bash
 #!/bin/perl
 
+username='fillusername'
+
+if [ $username = 'fillusername' ]
+then
+   echo "edit this input script with your user name to allow things to run"
+fi
+
 if [ $# -ne 10 ] && [ $# -ne 11 ] 
 then
 echo "$0 cation anion concentration(M) temperature(K) length(ns) investigating_anion_or_cation forward_or_backward replicate parallel box_size force"
@@ -48,7 +55,7 @@ else
 rep='_rep'$rep
 fi
 
-cp /scratch/g15/kpg575/GROMACS/empty-box.gro empty-box.gro
+cp /scratch/g15/$username/GROMACS/empty-box.gro empty-box.gro
 
 timestep=0.002
 nsteps=$(echo "$length/$timestep *1000" | bc )
@@ -188,13 +195,13 @@ fi
 module load gromacs
 
 
-numberqued=`qstat -u kpg575 | grep Q | grep vol | wc -l`
+numberqued=`qstat -u $username | grep Q | grep vol | wc -l`
 
 
 #qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$boxsize""$rep"  | wc -l`
 qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$boxsize""$rep"/"$cation""$anion"."$forback".olog  | wc -l`
-#qued2=`qstat -u kpg575 | grep gpuvol | grep Q | wc -l`
-qued2=`qstat -u kpg575 | grep Q | grep gpuvol |  wc -l`
+#qued2=`qstat -u $username | grep gpuvol | grep Q | wc -l`
+qued2=`qstat -u $username | grep Q | grep gpuvol |  wc -l`
 
 if [ $qued -ge 1 ]
 then
@@ -229,7 +236,8 @@ fi
 #if [ ! -f  "$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$boxsize""$rep"/"$cation""$anion"_water_fixed.gro ] || ( grep 'Finished mdrun' "$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$boxsize""$rep"/Lambda_*/Production_MD/m*.log )
 #if ! grep 'Finished mdrun' "$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$boxsize""$rep"/Lambda_*/Production_MD"$forback"/m*.log 
 #then
-cp /scratch/g15/kpg575/GROMACS/empty-box.gro empty-box.gro
+
+cp empty-box_template.gro empty-box.gro
 sed -i 's/XXXXXX/'$box_size'/g' empty-box.gro
 sed -i 's/YYYYYY/'$box_size'/g' empty-box.gro
 sed -i 's/ZZZZZZ/'$box_size'/g' empty-box.gro
