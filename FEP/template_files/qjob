@@ -1,14 +1,19 @@
 #!/bin/bash
 
+## EDIT THE FOLLOWING:
+## GMX_LOCATION for whereever your GROMACS executable is located e.g. "/apps/gromacs/2023-gpuvolta/bin"
+## PROJECT_NAME name of the project associated e.g. "g15"
+## If your HPC uses a different queuing system such as SLURM, the whole PBS section (i.e. job"$forback".job) will need to be adapted for that.
+## QNAME needs to be changed to the name of your queue "e.g. gpuvolta"
+## The STORAGE_LOCATION will need updating "e.g. scratch/g15+scratch/em52"
+## Possible there will be other things that need changing here if errors arise.
+
 forback=$1
 
 FREE_ENERGY=`pwd`
 MDP=$FREE_ENERGY/MDP
-GMX=/apps/gromacs/2023-gpuvolta/bin
+GMX=GMX_LOCATION
 
-#for (( i=0; i<21; i++ ))
-#do
-#FinCount=$(grep "Finished mdrun on rank 0" Lambda_*/Production_MD"$forback"/md*.log | wc -l )
 FinCount=$(grep -l "Finished mdrun on rank 0" Lambda_[0-9]/Production_MD"$forback"/md*.log Lambda_[0-9][0-9]/Production_MD"$forback"/md*.log |  wc -l)
 echo FinCount = $FinCount
 if [ $FinCount -lt 21 ]
@@ -16,16 +21,16 @@ then
 	echo Finished count is currently $FinCount
 cat <<END > job"$forback".job
 #!/bin/bash
-#PBS -P g15
+#PBS -P PROJECT_NAME
 #PBS -l ncpus=12
 #PBS -l ngpus=1
-#PBS -q gpuvolta
+#PBS -q QNAME
 #PBS -l mem=4GB
 #PBS -l walltime=15:00:00
 #PBS -l wd
 #PBS -o NA."$forback".olog
 #PBS -N NA."$forback"job
-#PBS -l storage=scratch/g15+scratch/em52
+#PBS -l storage=STORAGE_LOCATION
 
 module load gromacs/2022-gpuvolta
 
@@ -40,8 +45,7 @@ MDP='$MDP'
 echo ".mdp files are stored in $MDP"
 
 # Change to the location of your GROMACS-2018 installation
-#GMX=/usr/local/gromacs/bin
-GMX=/apps/gromacs/2023-gpuvolta/bin
+GMX=GMX_LOCATION
 
 for (( i=0; i<21; i++ ))
 do
@@ -69,7 +73,6 @@ do
 	then
     $GMX/gmx grompp -f $MDP/EM"$forback"/em_steep_\$LAMBDA.mdp -c $FREE_ENERGY/NA_water_fixed.gro -p $FREE_ENERGY/topol.top -o min\$LAMBDA.tpr -maxwarn 2
     $GMX/gmx mdrun -deffnm min\$LAMBDA -ntmpi 1 -ntomp 12
-#    $GMX/gmx mdrun -s min\$LAMBDA.tpr -nt 1 -v -c min\$LAMBDA.gro
     sleep 1
 else
 	echo "Minimisation EM\$LAMBDA"$forback" complete."
@@ -88,7 +91,6 @@ fi
     $GMX/gmx grompp -f $MDP/NVT"$forback"/nvt_\$LAMBDA.mdp -c ../EM"$forback"/min\$LAMBDA.gro -p $FREE_ENERGY/topol.top -o nvt\$LAMBDA.tpr -maxwarn 2
     rm -r ../EM"$forback"/
     $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm nvt\$LAMBDA
-#    $GMX/gmx mdrun -s nvt\$LAMBDA.tpr -nt 1 -v -c nvt\$LAMBDA.gro
     echo "Constant volume equilibration complete."
     sleep 1
 else
@@ -108,7 +110,6 @@ then
     $GMX/gmx grompp -f $MDP/NPT"$forback"/npt_\$LAMBDA.mdp -c ../NVT"$forback"/nvt\$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NVT"$forback"/nvt\$LAMBDA.cpt -o npt\$LAMBDA.tpr -maxwarn 2
     rm -r ../NVT"$forback"/
     $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm npt\$LAMBDA
-#    $GMX/gmx mdrun -s npt\$LAMBDA.tpr -nt 1 -v -c npt\$LAMBDA.gro
     echo "Constant pressure equilibration complete."
     sleep 1
 else
@@ -124,23 +125,16 @@ fi
     cd ../
     mkdir Production_MD"$forback"
     cd Production_MD"$forback"
-#if ! grep 'Finished mdrun' md\$LAMBDA.log || ! grep '1000000' md\$LAMBDA.log
 if ! grep 'Finished mdrun' md\$LAMBDA.log 
 then
-#    sed -i 's/rvdw                     = 1.4/rvdw                     = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
-#    sed -i 's/rlist                    = 1.4/rlist                    = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
-#    sed -i 's/rcoulomb                 = 1.4/rcoulomb                 = $boxcutoff/g' $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp
     $GMX/gmx grompp -f $MDP/Production_MD"$forback"/md_\$LAMBDA.mdp -c ../NPT"$forback"/npt\$LAMBDA.gro -p $FREE_ENERGY/topol.top -t ../NPT"$forback"/npt\$LAMBDA.cpt -o md\$LAMBDA.tpr -maxwarn 2
     rm -r ../NPT"$forback"/
     $GMX/gmx mdrun -v -ntmpi 1 -ntomp 12 -deffnm md\$LAMBDA
-#    $GMX/gmx mdrun -s md\$LAMBDA.tpr -nt 1 -v -c md\$LAMBDA.gro
     echo "Production MD"$forback" complete."
 else
-    # End
     echo "Ending. Job completed for lambda = \$LAMBDA"$forback""
 fi
 else
-    # End
     echo "Ending. Job completed for lambda = \$LAMBDA"$forback""
 fi
 done
@@ -161,27 +155,9 @@ then
 module load gromacs
 gmx bar -f $(ls Lambda_[0-9]/Production_MD"$forback"/md*.xvg Lambda_[0-9][0-9]/Production_MD"$forback"/md*.xvg) -o -oi > bar_analysis"$forback".dat
 tail -n48 bar_analysis"$forback".dat
-#echo $1 $2 $3 $4 $5 $6 $7
-#cd $wd
-#exit 0
 else
 tail -n48 bar_analysis"$forback".dat
-#echo $1 $2 $3 $4 $5 $6
-#cd $wd
 fi
-#exit 0
 fi
-
-
-#if [ $(ls Lambda_*/Production_MD"$forback"/md*.xvg | wc -l) -ge 21 ]
-#then
-#module load gromacs
-#if [ ! -f bar_analysis"$forback".dat ]
-#then
-#gmx bar -f Lambda_*/Production_MD"$forback"/md*.xvg -o -oi > bar_analysis"$forback".dat
-#fi
-#tail -n48 bar_analysis"$forback".dat
-#fi
-
 
 exit
