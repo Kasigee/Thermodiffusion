@@ -35,21 +35,22 @@
 #include <vector>
 #include <cmath>
 
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/analysisdata/analysisdata.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/analysisdata/modules/average.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/analysisdata/modules/plot.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/options/basicoptions.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/options/filenameoption.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/options/optionfiletype.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/selection/nbsearch.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/selection/selection.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/selection/selectioncollection.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/selection/selectionoption.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/trajectory/trajectoryframe.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/trajectoryanalysis/analysismodule.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/trajectoryanalysis/analysissettings.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/trajectoryanalysis/cmdlinerunner.h"
-#include "/home/575/kpg575/gromacs-2023/api/legacy/include/gromacs/options/ioptionscontainer.h"
+// Compile with -I<GROMACS 2023 source>/api/legacy/include so these headers are found.
+#include <gromacs/analysisdata/analysisdata.h>
+#include <gromacs/analysisdata/modules/average.h>
+#include <gromacs/analysisdata/modules/plot.h>
+#include <gromacs/options/basicoptions.h>
+#include <gromacs/options/filenameoption.h>
+#include <gromacs/options/optionfiletype.h>
+#include <gromacs/selection/nbsearch.h>
+#include <gromacs/selection/selection.h>
+#include <gromacs/selection/selectioncollection.h>
+#include <gromacs/selection/selectionoption.h>
+#include <gromacs/trajectory/trajectoryframe.h>
+#include <gromacs/trajectoryanalysis/analysismodule.h>
+#include <gromacs/trajectoryanalysis/analysissettings.h>
+#include <gromacs/trajectoryanalysis/cmdlinerunner.h>
+#include <gromacs/options/ioptionscontainer.h>
 
 using namespace gmx;
 

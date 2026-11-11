@@ -2,10 +2,10 @@
 
 ## EDIT THE FOLLOWING:
 ## GMX_LOCATION for whereever your GROMACS executable is located e.g. "/apps/gromacs/2023-gpuvolta/bin"
-## PROJECT_NAME name of the project associated e.g. "g15"
+## PROJECT_NAME name of the project associated e.g. "ab12"
 ## If your HPC uses a different queuing system such as SLURM, the whole PBS section (i.e. job"$forback".job) will need to be adapted for that.
 ## QNAME needs to be changed to the name of your queue "e.g. gpuvolta"
-## The STORAGE_LOCATION will need updating "e.g. scratch/g15+scratch/em52"
+## The STORAGE_LOCATION will need updating "e.g. scratch/ab12+scratch/cd34"
 ## Possible there will be other things that need changing here if errors arise.
 
 forback=$1
@@ -141,7 +141,7 @@ done
     cd $FREE_ENERGY
 END
 
-qsub -P g15 job"$forback".job
+qsub -P PROJECT_NAME job"$forback".job
 else
 echo Job already run	
 fi
