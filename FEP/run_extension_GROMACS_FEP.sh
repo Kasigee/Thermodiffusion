@@ -6,6 +6,7 @@ username='fillusername'
 if [ $username = 'fillusername' ]
 then
    echo "edit this input script with your user name to allow things to run"
+   exit 1
 fi
 
 if [ $# -ne 10 ] && [ $# -ne 11 ]

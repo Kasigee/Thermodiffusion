@@ -7,6 +7,7 @@ project='fillproject'
 if [ $username = 'fillusername' ] || [ $project = 'fillproject' ]
 then
    echo "edit this input script with your user name and project code to allow things to run"
+   exit 1
 fi
 
 if [ $# -ne 10 ] && [ $# -ne 11 ] 
