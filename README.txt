@@ -6,9 +6,9 @@ Permissions for scripts need to be changed to enable them to be executable:
 chmod +x run_GROMACS_FEP.sh
 chmod +x template_files/qjob
 
-The qjob template file will NEED to be adapted to your HPC system, as this is specific to a PBS queuing system.
+The qjob template file will NEED to be adapted to your HPC system, as this is specific to a PBS queuing system. The other q* job scripts use the same PROJECT_NAME and STORAGE_LOCATION placeholders.
 
-To run the initial script, edit the script to use your username and use the following format:
+To run the initial script, edit the script to use your username and project code and use the following format:
 ./run_GROMACS_FEP.sh cation anion concentration(M) temperature(K) total_time(ns) FEP_direction(forward_or_bakward) replicate_number parallel boxsize(nm) force(yes/no)
 
 for example

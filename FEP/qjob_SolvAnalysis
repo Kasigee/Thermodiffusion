@@ -51,7 +51,7 @@ fi
 
 #cat <<END > SolvAn"$ion".job
 ##!/bin/bash
-##PBS -P g15
+##PBS -P PROJECT_NAME
 ##PBS -l ncpus=12
 ##PBS -q normal
 ##PBS -l mem=4GB
@@ -59,7 +59,7 @@ fi
 ##PBS -l wd
 ##PBS -o SolvAn."$LAMBDA"."$forback".olog
 ##PBS -N SolvAn."$LAMBDA"."$forback"job
-##PBS -l storage=scratch/g15
+##PBS -l storage=STORAGE_LOCATION
 #
 #export OMP_NUM_THREADS=12
 
@@ -105,6 +105,6 @@ fi
 
 #END
 
-#qsub -P g15 SolvAn"$ion".job
+#qsub -P PROJECT_NAME SolvAn"$ion".job
 #rm  SolvAn"$ion".job
 

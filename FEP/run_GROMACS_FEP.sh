@@ -2,10 +2,12 @@
 #!/bin/perl
 
 username='fillusername'
+project='fillproject'
 
-if [ $username = 'fillusername' ]
+if [ $username = 'fillusername' ] || [ $project = 'fillproject' ]
 then
-   echo "edit this input script with your user name to allow things to run"
+   echo "edit this input script with your user name and project code to allow things to run"
+   exit 1
 fi
 
 if [ $# -ne 10 ] && [ $# -ne 11 ] 
@@ -55,7 +57,7 @@ else
 rep='_rep'$rep
 fi
 
-cp /scratch/g15/$username/GROMACS/empty-box.gro empty-box.gro
+cp /scratch/$project/$username/GROMACS/empty-box.gro empty-box.gro
 
 timestep=0.002
 nsteps=$(echo "$length/$timestep *1000" | bc )

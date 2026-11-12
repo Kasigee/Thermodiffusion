@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## EDIT THE FOLLOWING:
+## PROJECT_NAME name of the project associated e.g. "ab12"
+## The STORAGE_LOCATION will need updating "e.g. scratch/ab12+scratch/cd34"
+
 FREE_ENERGY=`pwd`
 MDP=$FREE_ENERGY/MDP
 GMX=/apps/gromacs/2023-gpuvolta/bin
@@ -13,7 +17,7 @@ then
 #	exit 0
 cat <<END > job"$i".job
 #!/bin/bash
-#PBS -P em52
+#PBS -P PROJECT_NAME
 #PBS -l ncpus=12
 #PBS -l ngpus=1
 #PBS -q gpuvolta
@@ -22,7 +26,7 @@ cat <<END > job"$i".job
 #PBS -l wd
 #PBS -o NACL"$i".olog
 #PBS -N NACL"$i"
-#PBS -l storage=scratch/g15
+#PBS -l storage=STORAGE_LOCATION
 
 module load gromacs/2022-gpuvolta
 
@@ -126,7 +130,7 @@ fi
     cd $FREE_ENERGY
 END
 
-qsub -P em52 job"$i".job
+qsub -P PROJECT_NAME job"$i".job
 else
 echo Lambda $i job already run	
 fi

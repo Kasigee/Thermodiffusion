@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## EDIT THE FOLLOWING:
+## PROJECT_NAME name of the project associated e.g. "ab12"
+## The STORAGE_LOCATION will need updating "e.g. scratch/ab12+scratch/cd34"
+
 forback=$1
 
 FREE_ENERGY=`pwd`
@@ -31,7 +35,7 @@ then
 	LAMBDA=$i
 cat <<END > job"$forback".job
 #!/bin/bash
-#PBS -P g15
+#PBS -P PROJECT_NAME
 #PBS -l ncpus=12
 #PBS -l ngpus=1
 #PBS -q gpuvolta
@@ -40,7 +44,7 @@ cat <<END > job"$forback".job
 #PBS -l wd
 #PBS -o NA."$LAMBDA"."$forback".olog
 #PBS -N NA."$LAMBDA"."$forback"job
-#PBS -l storage=scratch/g15+scratch/em52
+#PBS -l storage=STORAGE_LOCATION
 
 module load gromacs/2022-gpuvolta
 
@@ -75,14 +79,14 @@ END
 
 #qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion"paired"$rep"/*."$i".*  | wc -l`
 qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion""$rep"/*."$i".*  | wc -l`
-qued2=`qstat -u kpg575 | grep gpuvol | grep Q | wc -l`
+qued2=`qstat -u $USER | grep gpuvol | grep Q | wc -l`
 if [ $qued -ge 1 ]
 then
 echo Not $i queuing - Queued
 continue
 #exit 0
 else
-qsub -P g15 job"$forback".job
+qsub -P PROJECT_NAME job"$forback".job
 fi
 else
 echo "Job already run (qjob_extension script)"

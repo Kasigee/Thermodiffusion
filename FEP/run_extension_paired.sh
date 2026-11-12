@@ -1,6 +1,14 @@
 #!/bin/bash
 #!/bin/perl
 
+username='fillusername'
+
+if [ $username = 'fillusername' ]
+then
+   echo "edit this input script with your user name to allow things to run"
+   exit 1
+fi
+
 if [ $# -ne 10 ] && [ $# -ne 11 ]
 then
 echo "$0 cation anion concentration(M) temperature(K) length(ns) investigating_anion_or_cation forward_or_backward replicate parallel box_size force"
@@ -180,8 +188,8 @@ fi
 module load gromacs
 
 qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion"paired"$rep"  | wc -l`
-qued2=`qstat -u kpg575 | grep gpuvol | grep Q | wc -l`
-#qued2=`qstat -u kpg575 | grep gpuvo | wc -l`
+qued2=`qstat -u $username | grep gpuvol | grep Q | wc -l`
+#qued2=`qstat -u $username | grep gpuvo | wc -l`
 if [ $qued -ge 1 ]
 then
 echo Not queuing - Queued
@@ -260,12 +268,12 @@ cation2=$cation
 anion2=$anion
 fi
 
-numberqued=`qstat -u kpg575 | grep Q | grep vol | wc -l`
+numberqued=`qstat -u $username | grep Q | grep vol | wc -l`
 
 
 #qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion"paired"$rep"  | wc -l`
 qued=`qstat -f | tr -d '\n' | tr -d '[:blank:]' | grep "$wd"/"$cation""$anion"_"$conc"M_"$temperature"K_"$length"ns_"$cation_or_anion"paired"$rep"  | wc -l`
-qued2=`qstat -u kpg575 | grep gpuvol | grep Q | wc -l`
+qued2=`qstat -u $username | grep gpuvol | grep Q | wc -l`
 if [ $qued -ge 1 ]
 then
 echo Not queuing - Queued

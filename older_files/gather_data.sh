@@ -1,6 +1,7 @@
 echo radius ion temperature ES_Start N_LAMBDA Pressure Ensemble FE FE_err
 echo radius ion temperature ES_Start N_LAMBDA Pressure Ensemble FE FE_err > FEP_data.log
-for file in /scratch/g15/kpg575/NAMD/radius_*/*/*/*/*/forwards/fepout/ParseFEP.log
+# Replace PROJECT_NAME with your project code. The awk field numbers below assume this path depth.
+for file in /scratch/PROJECT_NAME/$USER/NAMD/radius_*/*/*/*/*/forwards/fepout/ParseFEP.log
 do
         radius=$( echo $file | awk -F/ '{print $6}' | awk -F'radius_' '{print $NF}')
         ion=$( echo $file | awk -F/ '{print $7}')

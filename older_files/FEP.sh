@@ -176,7 +176,7 @@ cat <<END > ParseFEP_"$boxlength""$ion""$temperature""$lambdaStart""$AnalysisFil
 #PBS -l ncpus=48
 #PBS -l software=vmd
 #PBS -l wd
-#PBS -P g15
+#PBS -P PROJECT_NAME
 #PBS -q normal
 
 
